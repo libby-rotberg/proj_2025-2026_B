@@ -1,9 +1,9 @@
-# id1:
-# name1:
-# username1:
-# id2:
-# name2:
-# username2:
+# id1: 215537218
+# name1: Nehora Shabtay
+# username1: nehora
+# id2: 216191627
+# name2: Libby Rotberg
+# username2: Libbyrotberg
 
 
 """A class representing a node in an AVL tree"""
@@ -51,6 +51,8 @@ class AVLTree(object):
 
     def __init__(self, is_avl):
         self.root = None
+        self.is_avl = is_avl
+        self.size = 0
 
     """searches for a node in the dictionary corresponding to the key (starting at the root)
 
