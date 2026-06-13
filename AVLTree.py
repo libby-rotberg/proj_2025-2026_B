@@ -56,7 +56,7 @@ class AVLTree(object):
         self.virtual_node = AVLNode(None, None) 
         self.virtual_node.height = -1
 
-    def get_height(self, node):
+    def get_node_height(self, node):
         if node is None or not node.is_real_node():
             return -1
         return node.height
@@ -75,8 +75,8 @@ class AVLTree(object):
             B.parent.right = A
         A.left = B
         B.parent = A        
-        B.height = max(self.get_height(B.left), self.get_height(B.right)) + 1
-        A.height = max(self.get_height(A.left), self.get_height(A.right)) + 1
+        B.height = max(self.get_node_height(B.left), self.get_node_height(B.right)) + 1
+        A.height = max(self.get_node_height(A.left), self.get_node_height(A.right)) + 1
         return A
 
     def right_rotate(self, B):
@@ -93,8 +93,8 @@ class AVLTree(object):
             B.parent.right = A
         A.right = B
         B.parent = A
-        B.height = max(self.get_height(B.left), self.get_height(B.right)) + 1
-        A.height = max(self.get_height(A.left), self.get_height(A.right)) + 1
+        B.height = max(self.get_node_height(B.left), self.get_node_height(B.right)) + 1
+        A.height = max(self.get_node_height(A.left), self.get_node_height(A.right)) + 1
         return A
 
     """searches for a node in the dictionary corresponding to the key (starting at the root)
@@ -155,8 +155,8 @@ class AVLTree(object):
         if self.is_avl:
             y = parent
             while y is not None and y.is_real_node():
-                left_h = self.get_height(y.left)
-                right_h = self.get_height(y.right)
+                left_h = self.get_node_height(y.left)
+                right_h = self.get_node_height(y.right)
                 bf = left_h - right_h
                 new_height = max(left_h, right_h) + 1
                 height_changed = (new_height != y.height)
@@ -169,7 +169,7 @@ class AVLTree(object):
                         y = y.parent
                 else:
                     if bf == 2:
-                        left_bf = self.get_height(y.left.left) - self.get_height(y.left.right)
+                        left_bf = self.get_node_height(y.left.left) - self.get_node_height(y.left.right)
                         if left_bf >= 0: 
                             self.right_rotate(y)
                             rotations += 1
@@ -178,7 +178,7 @@ class AVLTree(object):
                             self.right_rotate(y)
                             rotations += 2
                     else: 
-                        right_bf = self.get_height(y.right.left) - self.get_height(y.right.right)
+                        right_bf = self.get_node_height(y.right.left) - self.get_node_height(y.right.right)
                         if right_bf <= 0: 
                             self.left_rotate(y)
                             rotations += 1
@@ -237,7 +237,9 @@ class AVLTree(object):
     """
 
     def get_root(self):
-        return None
+        if self.root is None or not self.root.is_real_node():
+            return None
+        return self.root
 
     """returns the height of the tree
 
