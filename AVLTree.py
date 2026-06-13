@@ -107,7 +107,12 @@ class AVLTree(object):
     """
 
     def search(self, key):
-        return None, -1
+        search_time=0
+
+        node=self.root
+        while(node!=None):
+
+    
 
     """inserts a new node into the dictionary with corresponding key and value (starting at the root)
 
@@ -187,7 +192,7 @@ class AVLTree(object):
                             self.left_rotate(y)
                             rotations += 2
                     break
-                    
+        self.size+=1           
         return new_node, search_time, rotations, height_changes
 
     """deletes node from the dictionary
@@ -228,7 +233,11 @@ class AVLTree(object):
     """
 
     def size(self):
-        return -1
+        if self.root is None or not self.root.is_real_node():
+            return 0
+        else:
+            return self.size
+
 
     """returns the root of the tree representing the dictionary
 
@@ -248,4 +257,12 @@ class AVLTree(object):
         """
 
     def get_height(self):
-        return -1
+        if self.root is None or not self.root.is_real_node():
+            return -1
+        if self.is_avl or self.root:
+            return self.root.height
+        else: 
+            node=self.root
+            int height=0
+            while(node!=
+            
