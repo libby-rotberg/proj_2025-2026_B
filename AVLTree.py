@@ -199,6 +199,17 @@ class AVLTree(object):
     def delete(self, node):
         return
 
+    """recursive function that performs an in-order traversal of the tree
+    """
+     
+    def inorder_helper(self, node, result):
+        if node is None or not node.is_real_node():
+            return
+        self.inorder_helper(node.left, result)
+        result.append((node.key, node.value))
+        self.inorder_helper(node.right, result)
+
+
     """returns a list representing dictionary 
 
     @rtype: list
@@ -206,7 +217,9 @@ class AVLTree(object):
     """
 
     def avl_to_list(self):
-        return None
+        result = [] 
+        self.inorder_helper(self.root, result)
+        return result
 
     """returns the number of items in dictionary 
 
