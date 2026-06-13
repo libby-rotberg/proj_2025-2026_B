@@ -33,7 +33,7 @@ class AVLNode(object):
     """
 
     def is_real_node(self):
-        return False
+        return self.height!=-1
 
 
 """
@@ -53,6 +53,49 @@ class AVLTree(object):
         self.root = None
         self.is_avl = is_avl
         self.size = 0
+        self.virtual_node = AVLNode(None, None) 
+        self.virtual_node.height = -1
+
+    def get_height(self, node):
+        if node is None or not node.is_real_node():
+            return -1
+        return node.height
+
+    def left_rotate(self, B):
+        A = B.right
+        B.right = A.left
+        if A.left.is_real_node():
+            A.left.parent = B
+        A.parent = B.parent
+        if B.parent is None or not B.parent.is_real_node():
+            self.root = A
+        elif B == B.parent.left:
+            B.parent.left = A
+        else:
+            B.parent.right = A
+        A.left = B
+        B.parent = A        
+        B.height = max(self.get_height(B.left), self.get_height(B.right)) + 1
+        A.height = max(self.get_height(A.left), self.get_height(A.right)) + 1
+        return A
+
+    def right_rotate(self, B):
+        A = B.left
+        B.left = A.right
+        if A.right.is_real_node():
+            A.right.parent = B
+        A.parent = B.parent
+        if B.parent is None or not B.parent.is_real_node():
+            self.root = A
+        elif B == B.parent.left:
+            B.parent.left = A
+        else:
+            B.parent.right = A
+        A.right = B
+        B.parent = A
+        B.height = max(self.get_height(B.left), self.get_height(B.right)) + 1
+        A.height = max(self.get_height(A.left), self.get_height(A.right)) + 1
+        return A
 
     """searches for a node in the dictionary corresponding to the key (starting at the root)
 
@@ -79,7 +122,73 @@ class AVLTree(object):
     """
 
     def insert(self, key, val):
-        return None, -1, -1, -1
+        new_node = AVLNode(key, val)
+        new_node.left = self.virtual_node
+        new_node.right = self.virtual_node
+        if self.is_avl:
+            new_node.height = 0
+
+        search_time = 0
+        parent = None
+        curr = self.root
+        while curr is not None and curr.is_real_node():
+            search_time += 1
+            parent = curr
+            if key < curr.key:
+                curr = curr.left
+            else:
+                curr = curr.right
+        search_time += 1
+
+        new_node.parent = parent
+        if parent is None or not parent.is_real_node():
+            self.root = new_node
+        elif key < parent.key:
+            parent.left = new_node
+        else:
+            parent.right = new_node
+        self.size += 1
+        
+        rotations = 0
+        height_changes = 0
+        
+        if self.is_avl:
+            y = parent
+            while y is not None and y.is_real_node():
+                left_h = self.get_height(y.left)
+                right_h = self.get_height(y.right)
+                bf = left_h - right_h
+                new_height = max(left_h, right_h) + 1
+                height_changed = (new_height != y.height)
+                if abs(bf) < 2:
+                    if not height_changed:
+                        break
+                    else:
+                        y.height = new_height
+                        height_changes += 1  
+                        y = y.parent
+                else:
+                    if bf == 2:
+                        left_bf = self.get_height(y.left.left) - self.get_height(y.left.right)
+                        if left_bf >= 0: 
+                            self.right_rotate(y)
+                            rotations += 1
+                        else:
+                            self.left_rotate(y.left)
+                            self.right_rotate(y)
+                            rotations += 2
+                    else: 
+                        right_bf = self.get_height(y.right.left) - self.get_height(y.right.right)
+                        if right_bf <= 0: 
+                            self.left_rotate(y)
+                            rotations += 1
+                        else:  
+                            self.right_rotate(y.right)
+                            self.left_rotate(y)
+                            rotations += 2
+                    break
+                    
+        return new_node, search_time, rotations, height_changes
 
     """deletes node from the dictionary
 
