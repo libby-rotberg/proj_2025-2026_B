@@ -107,10 +107,18 @@ class AVLTree(object):
     """
 
     def search(self, key):
-        search_time=0
+        search_time=1
 
         node=self.root
-        while(node!=None):
+        while(node!=None and node.is_real_node()):
+            search_time+=1
+            if(node.key==key):
+                return (node,search_time)
+            if(node.key<key):
+                node=node.right
+            else:
+                node=node.left
+        return (None,search_time)
 
     
 
@@ -191,8 +199,7 @@ class AVLTree(object):
                             self.right_rotate(y.right)
                             self.left_rotate(y)
                             rotations += 2
-                    break
-        self.size+=1           
+                    break       
         return new_node, search_time, rotations, height_changes
 
     """deletes node from the dictionary
