@@ -207,10 +207,86 @@ class AVLTree(object):
     @type node: AVLNode
     @pre: node is a real pointer to a node in self
     """
+    """finding a successor to a node in the tree"""
+    def successor(self, node):
+    #starting by searching the node in the tree
+
+    # מקרה 1: יש בן ימני
+        if node.right.is_real_node():
+            curr = node.right
+            while(curr.left.is_real_node()):
+                curr=curr.left
+            return curr
+
+    # מקרה 2: אין בן ימני
+        else:
+            curr=node
+            parent=node.parent
+            while curr==parent.right and curr.is_real_node():
+                curr=parent
+                parent=curr.parent
+            if curr==parent.left:
+             return parent
+            if not curr.is_real_node():
+                return None
 
     def delete(self, node):
-        return
-
+        if node is None or not node.is_real_node():
+            return 0
+        
+        if node.left.is_real_node() and node.right.is_real_node():
+            succ = self.successor(node)
+            node.value = succ.value
+            node.key = succ.key
+            remove_node = succ 
+        else:
+            remove_node = node
+            
+        if remove_node.left.is_real_node():
+            child = remove_node.left
+        else:
+            child = remove_node.right
+        physical_parent = remove_node.parent
+        if child.is_real_node():
+            child.parent = physical_parent
+        if physical_parent is None or not physical_parent.is_real_node():
+            self.root = child
+            if child.is_real_node():
+                child.parent = None
+        elif remove_node == physical_parent.left:
+            physical_parent.left = child
+        else:
+            physical_parent.right = child
+        self.size -= 1
+        
+        rotations = 0
+        if self.is_avl:
+            curr = physical_parent
+            while curr is not None and curr.is_real_node():
+                curr.height = max(self.get_node_height(curr.left), self.get_node_height(curr.right)) + 1
+                bf = self.get_node_height(curr.left) - self.get_node_height(curr.right)
+                if bf == 2:
+                    left_bf = self.get_node_height(curr.left.left) - self.get_node_height(curr.left.right)
+                    if left_bf >= 0: 
+                        curr = self.right_rotate(curr)
+                        rotations += 1
+                    else: 
+                        self.left_rotate(curr.left)
+                        curr = self.right_rotate(curr)
+                        rotations += 2
+                        
+                elif bf == -2:
+                    right_bf = self.get_node_height(curr.right.left) - self.get_node_height(curr.right.right)
+                    if right_bf <= 0: 
+                        curr = self.left_rotate(curr)
+                        rotations += 1
+                    else: 
+                        self.right_rotate(curr.right)
+                        curr = self.left_rotate(curr)
+                        rotations += 2
+                curr = curr.parent    
+        return rotations
+    
     """recursive function that performs an in-order traversal of the tree
     """
      
@@ -262,14 +338,21 @@ class AVLTree(object):
         @rtype: int
         @returns: the height of the tree 
         """
-
+    
+    def calc_height(self, node):
+        if node is None or not node.is_real_node():
+            return -1
+        return 1 + max(self.calc_height(node.left), self.calc_height(node.right)
+    
     def get_height(self):
         if self.root is None or not self.root.is_real_node():
             return -1
-        if self.is_avl or self.root:
+        if self.is_avl:
             return self.root.height
-        else: 
-            node=self.root
-            int height=0
-            while(node!=
-            
+        else:
+            return self.calc_height(self.root)
+
+
+    
+    
+       
