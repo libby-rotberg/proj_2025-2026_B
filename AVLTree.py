@@ -52,7 +52,7 @@ class AVLTree(object):
     def __init__(self, is_avl):
         self.root = None
         self.is_avl = is_avl
-        self.size = 0
+        self._size = 0
         self.virtual_node = AVLNode(None, None) 
         self.virtual_node.height = -1
 
@@ -107,8 +107,7 @@ class AVLTree(object):
     """
 
     def search(self, key):
-        search_time=1
-
+        search_time=0
         node=self.root
         while(node!=None and node.is_real_node()):
             search_time+=1
@@ -118,7 +117,7 @@ class AVLTree(object):
                 node=node.right
             else:
                 node=node.left
-        return (None,search_time)
+        return (None,search_time+1)
 
     
 
@@ -160,7 +159,7 @@ class AVLTree(object):
             parent.left = new_node
         else:
             parent.right = new_node
-        self.size += 1
+        self._size += 1
         
         rotations = 0
         height_changes = 0
@@ -209,26 +208,19 @@ class AVLTree(object):
     """
     """finding a successor to a node in the tree"""
     def successor(self, node):
-    #starting by searching the node in the tree
-
-    # מקרה 1: יש בן ימני
         if node.right.is_real_node():
             curr = node.right
-            while(curr.left.is_real_node()):
+            while curr.left.is_real_node():
                 curr=curr.left
             return curr
 
-    # מקרה 2: אין בן ימני
         else:
             curr=node
             parent=node.parent
-            while curr==parent.right and curr.is_real_node():
-                curr=parent
-                parent=curr.parent
-            if curr==parent.left:
-             return parent
-            if not curr.is_real_node():
-                return None
+            while parent is not None and parent.is_real_node() and curr == parent.right:
+                curr = parent
+                parent = curr.parent
+            return parent
 
     def delete(self, node):
         if node is None or not node.is_real_node():
@@ -257,7 +249,7 @@ class AVLTree(object):
             physical_parent.left = child
         else:
             physical_parent.right = child
-        self.size -= 1
+        self._size -= 1
         
         rotations = 0
         if self.is_avl:
@@ -319,7 +311,7 @@ class AVLTree(object):
         if self.root is None or not self.root.is_real_node():
             return 0
         else:
-            return self.size
+            return self._size
 
 
     """returns the root of the tree representing the dictionary
