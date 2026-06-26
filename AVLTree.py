@@ -342,7 +342,7 @@ class AVLTree(object):
     def calc_height(self, node):
         if node is None or not node.is_real_node():
             return -1
-        return 1 + max(self.calc_height(node.left), self.calc_height(node.right)
+        return 1 + max(self.calc_height(node.left), self.calc_height(node.right))
     
     def get_height(self):
         if self.root is None or not self.root.is_real_node():
@@ -351,8 +351,3 @@ class AVLTree(object):
             return self.root.height
         else:
             return self.calc_height(self.root)
-
-
-    
-    
-       
